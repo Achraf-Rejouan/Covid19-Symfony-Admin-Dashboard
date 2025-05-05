@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 05, 2025 at 07:23 AM
+-- Generation Time: May 05, 2025 at 09:09 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -57,8 +57,30 @@ CREATE TABLE `medecin` (
 --
 
 INSERT INTO `medecin` (`id_medecin`, `nom_prenom`, `code`) VALUES
-(2, 'rej', '123450'),
-(3, 'Rejouan', '123456');
+(2, 'Mourad ben Abdallah', '123450'),
+(3, 'Achraf Rejouan', '123456'),
+(4, 'Sami Ben Ahmed', '812349'),
+(5, 'Nadia Trabelsi', '924137'),
+(6, 'Karim Jlassi', '307521'),
+(7, 'Henda Gharbi', '190834'),
+(8, 'Firas Messaoud', '673298'),
+(9, 'Rim Bouzid', '548213'),
+(10, 'Yassine Chebbi', '732905'),
+(11, 'Ameni Chérif', '128495'),
+(12, 'Omar Guesmi', '604712'),
+(13, 'Nour Mhiri', '930184'),
+(14, 'Mahdi Khemiri', '517029'),
+(15, 'Imen Saidi', '893164'),
+(16, 'Walid Jebali', '245971'),
+(17, 'Sana Kallel', '678230'),
+(18, 'Tarek Zarrouk', '159382'),
+(19, 'Leila Baccar', '762401'),
+(20, 'Anis Ben Romdhane', '331847'),
+(21, 'Rania Oueslati', '486925'),
+(22, 'Chokri Marzouki', '904173'),
+(23, 'Yasmine Sassi', '718352'),
+(24, 'Nizar Frikha', '246893'),
+(25, 'Mouna Jelassi', '538026');
 
 -- --------------------------------------------------------
 
@@ -96,7 +118,20 @@ CREATE TABLE `patient` (
 --
 
 INSERT INTO `patient` (`id_patient`, `medecin_id`, `nom_prenom`, `date_naiss`, `genre`, `date_entree`) VALUES
-(2, 3, 'achraf', '2025-04-30', 'male', '2025-05-21');
+(2, 3, 'Nour Ben Youssef', '1998-04-30', 'femme', '2025-05-21'),
+(3, 5, 'Hichem Ben Salah', '1984-07-19', 'homme', '2024-11-10'),
+(4, 12, 'Syrine Dridi', '1992-03-05', 'femme', '2025-01-24'),
+(5, 7, 'Nader Jaziri', '1978-09-14', 'homme', '2023-07-30'),
+(6, 21, 'Lina Ktari', '2001-12-02', 'femme', '2025-04-18'),
+(7, 3, 'Fathi Ayari', '1965-01-22', 'homme', '2024-03-09'),
+(8, 14, 'Imen Chouchene', '1989-05-11', 'femme', '2023-08-25'),
+(9, 9, 'Youssef Laaroussi', '2005-10-06', 'homme', '2025-05-02'),
+(10, 18, 'Nesrine Baccour', '1973-02-27', 'femme', '2024-12-15'),
+(11, 24, 'Walid Zoghlami', '1980-06-01', 'homme', '2023-10-06'),
+(12, 6, 'Sabrine Hammami', '1995-11-23', 'femme', '2024-02-14'),
+(13, 17, 'Adel Mbarek', '1969-08-09', 'homme', '2023-11-20'),
+(14, 2, 'Aicha Rekik', '2000-04-03', 'femme', '2025-03-29'),
+(15, 11, 'Khaled Mejri', '1958-12-17', 'homme', '2024-06-11');
 
 --
 -- Indexes for dumped tables
@@ -138,7 +173,7 @@ ALTER TABLE `patient`
 -- AUTO_INCREMENT for table `medecin`
 --
 ALTER TABLE `medecin`
-  MODIFY `id_medecin` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_medecin` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `messenger_messages`
@@ -150,7 +185,7 @@ ALTER TABLE `messenger_messages`
 -- AUTO_INCREMENT for table `patient`
 --
 ALTER TABLE `patient`
-  MODIFY `id_patient` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_patient` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- Constraints for dumped tables
