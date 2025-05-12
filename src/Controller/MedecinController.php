@@ -66,30 +66,49 @@ final class MedecinController extends AbstractController
             'form' => $form,
         ]);
     }
+#[Route('/{id_medecin}/edit', name: 'app_medecin_edit', methods: ['GET', 'POST'], requirements: ['id_medecin' => Requirement::DIGITS])]
+public function edit(Request $request, MedecinRepository $repo, EntityManagerInterface $entityManager, SluggerInterface $slugger, int $id_medecin): Response
+{
+    $medecin = $repo->find($id_medecin);
 
-    #[Route('/{id_medecin}/edit', name: 'app_medecin_edit', methods: ['GET', 'POST'], requirements: ['id_medecin' => Requirement::DIGITS])]
-    public function edit(Request $request, MedecinRepository $repo, EntityManagerInterface $entityManager, int $id_medecin): Response
-    {
-        $medecin = $repo->find($id_medecin);
-
-        if (!$medecin) {
-            throw $this->createNotFoundException('Médecin non trouvé');
-        }
-
-        $form = $this->createForm(MedecinForm::class, $medecin);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_medecin_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('medecin/edit.html.twig', [
-            'medecin' => $medecin,
-            'form' => $form,
-        ]);
+    if (!$medecin) {
+        throw $this->createNotFoundException('Médecin non trouvé');
     }
+
+    $form = $this->createForm(MedecinForm::class, $medecin);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        /** @var UploadedFile $photoFile */
+        $photoFile = $form->get('photo')->getData();
+
+        if ($photoFile) {
+            $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeFilename = $slugger->slug($originalFilename);
+            $newFilename = $safeFilename . '-' . uniqid() . '.' . $photoFile->guessExtension();
+
+            try {
+                $photoFile->move(
+                    $this->getParameter('photos_directory'),
+                    $newFilename
+                );
+                $medecin->setPhotoFilename($newFilename);
+            } catch (FileException $e) {
+                $this->addFlash('danger', 'Erreur lors de l\'upload du fichier.');
+            }
+        }
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Médecin modifié avec succès !');
+        return $this->redirectToRoute('app_medecin_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    return $this->render('medecin/edit.html.twig', [
+        'medecin' => $medecin,
+        'form' => $form,
+    ]);
+}
 
     #[Route('/{id_medecin}', name: 'app_medecin_delete', methods: ['POST'], requirements: ['id_medecin' => Requirement::DIGITS])]
     public function delete(Request $request, MedecinRepository $repo, EntityManagerInterface $entityManager, int $id_medecin): Response
