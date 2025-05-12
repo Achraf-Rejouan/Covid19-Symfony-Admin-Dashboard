@@ -6,6 +6,7 @@ use App\Entity\Medecin;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 class MedecinForm extends AbstractType
 {
@@ -14,6 +15,11 @@ class MedecinForm extends AbstractType
         $builder
             ->add('nom_prenom')
             ->add('code')
+            ->add('photo', FileType::class, [
+                'label' => 'Photo',
+                'mapped' => false,
+                'required' => false,
+            ]);
         ;
     }
 

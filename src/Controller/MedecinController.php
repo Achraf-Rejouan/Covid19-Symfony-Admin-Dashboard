@@ -11,6 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+
+
 
 #[Route('/medecin')]
 final class MedecinController extends AbstractController
@@ -24,36 +28,42 @@ final class MedecinController extends AbstractController
     }
 
     #[Route('/new', name: 'app_medecin_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $medecin = new Medecin();
         $form = $this->createForm(MedecinForm::class, $medecin);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $photoFile */
+            $photoFile = $form->get('photo')->getData();
+
+            if ($photoFile) {
+                $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $photoFile->guessExtension();
+
+                try {
+                    $photoFile->move(
+                        $this->getParameter('photos_directory'),
+                        $newFilename
+                    );
+                    $medecin->setPhotoFilename($newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('danger', 'Erreur lors de l\'upload du fichier.');
+                }
+            }
+
             $entityManager->persist($medecin);
             $entityManager->flush();
 
+            $this->addFlash('success', 'Médecin ajouté avec succès !');
             return $this->redirectToRoute('app_medecin_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('medecin/new.html.twig', [
             'medecin' => $medecin,
             'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id_medecin}', name: 'app_medecin_show', methods: ['GET'], requirements: ['id_medecin' => Requirement::DIGITS])]
-    public function show(MedecinRepository $repo, int $id_medecin): Response
-    {
-        $medecin = $repo->find($id_medecin);
-
-        if (!$medecin) {
-            throw $this->createNotFoundException('Médecin non trouvé');
-        }
-
-        return $this->render('medecin/show.html.twig', [
-            'medecin' => $medecin,
         ]);
     }
 
@@ -97,4 +107,19 @@ final class MedecinController extends AbstractController
 
         return $this->redirectToRoute('app_medecin_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/{id_medecin}', name: 'app_medecin_show', methods: ['GET'], requirements: ['id_medecin' => Requirement::DIGITS])]
+    public function show(MedecinRepository $repo, int $id_medecin): Response
+    {
+        $medecin = $repo->find($id_medecin);
+
+        if (!$medecin) {
+            throw $this->createNotFoundException('Médecin non trouvé');
+        }
+
+        return $this->render('medecin/show.html.twig', [
+            'medecin' => $medecin,
+        ]);
+    }
 }
+

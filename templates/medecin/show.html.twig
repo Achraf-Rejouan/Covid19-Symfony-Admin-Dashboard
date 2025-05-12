@@ -19,6 +19,13 @@
                 <th>Code</th>
                 <td>{{ medecin.code }}</td>
             </tr>
+            <tr>
+            {% if medecin.photoFilename %}
+    <img src="{{ asset('uploads/photos/' ~ medecin.photoFilename) }}" alt="Photo du médecin" style="max-width:200px;">
+{% else %}
+    <p>Aucune photo disponible.</p>
+{% endif %}
+</tr>
         </tbody>
     </table>
 

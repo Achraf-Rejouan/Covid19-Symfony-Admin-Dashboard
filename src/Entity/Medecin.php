@@ -23,6 +23,9 @@ class Medecin
     #[ORM\Column(length: 255)]
     private ?string $code = null;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $photoFilename = null;
+
     /**
      * @var Collection<int, Patient>
      */
@@ -97,12 +100,28 @@ class Medecin
     public function removePatient(Patient $patient): static
     {
         if ($this->patients->removeElement($patient)) {
-            // set the owning side to null (unless already changed)
             if ($patient->getMedecinId() === $this) {
                 $patient->setMedecinId(null);
             }
         }
 
+        return $this;
+    }
+
+    public function getPhotoFilename(): ?string
+    {
+        return $this->photoFilename;
+    }
+
+    public function getPhoto(): ?string
+    {
+        return $this->photoFilename;
+    }
+
+
+    public function setPhotoFilename(?string $photoFilename): self
+    {
+        $this->photoFilename = $photoFilename;
         return $this;
     }
 }
